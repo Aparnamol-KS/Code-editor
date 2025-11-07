@@ -3,6 +3,23 @@ const mongoose = require('mongoose');
 
 mongoose.connect(process.env.MONGODB_URI)
 
+const userSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+})
+
 
 const problemSchema = new mongoose.Schema({
     title: {
@@ -36,12 +53,16 @@ const problemSchema = new mongoose.Schema({
 });
 
 
-
 const submissionSchema = new mongoose.Schema({
     problemId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Problem",
         required: true,
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',   
+        required: true
     },
     code: {
         type: String,
@@ -73,7 +94,8 @@ const submissionSchema = new mongoose.Schema({
 
 const Problem = mongoose.model('Problem', problemSchema);
 const Submission = mongoose.model('Submission', submissionSchema);
+const User = mongoose.model('User', userSchema)
 
 module.exports = {
-    Problem, Submission
+    Problem, Submission, User
 };

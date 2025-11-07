@@ -2,12 +2,84 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose')
 const axios = require('axios')
-const { problemInputSchema, submissionInputSchema } = require('./types')
-const { Problem, Submission } = require('./models');
+const { problemInputSchema, loginSchema, registerSchema } = require('./types')
+const { Problem, Submission, User } = require('./models');
+const jwt = require('jsonwebtoken')
+const {authMiddleware} = require('./middleware')
+
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 require('dotenv').config();
+
+router.post('/register', async (req, res) => {
+    try {
+        const result = registerSchema.safeParse(req.body);
+        if (!result.success) {
+            return res.status(400).json({
+                message: "Input Validation failed",
+                errors: result.error.errors,
+            });
+        }
+        const { username, email, password } = req.body;
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(400).json({
+                message: "User already exists"
+            });
+        }
+
+        const newUser = new User({ username, email, password });
+        await newUser.save();
+
+        res.json({ message: "User registered successfully" });
+    } catch (error) {
+        res.status(500).json({
+            error: error.message
+        });
+    }
+});
+
+router.post('/login', async (req, res) => {
+    try {
+        const result = loginSchema.safeParse(req.body);
+        if (!result.success) {
+            return res.status(400).json({
+                message: "Input Validation failed",
+                errors: result.error.errors,
+            });
+        }
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({
+                message: "Invalid email or password"
+            });
+        }
+
+        const isMatch = password == user.password;
+        if (!isMatch) {
+            return res.status(400).json({
+                message: "Invalid email or password"
+            });
+        }
+
+        const token = jwt.sign({
+            id: user._id
+        }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+        res.json({
+            message: "Login successful",
+            token,
+            user: { id: user._id, username: user.username }
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: error.message
+        });
+    }
+});
 
 const JUDGE_URL = 'https://judge0-ce.p.rapidapi.com/submissions';
 
@@ -39,9 +111,9 @@ const languageMap = {
 };
 
 
-app.post('/submit', async (req, res) => {
+app.post('/submit',authMiddleware, async (req, res) => {
     try {
-        const { problemId, code, language } = req.body;
+        const { problemId, code, language,userId  } = req.body;
         const languageId = languageMap[language]
         if (!languageId) {
             return res.status(400).json({
@@ -72,8 +144,9 @@ app.post('/submit', async (req, res) => {
 
         const newSubmission = await Submission.create({
             problemId,
+            userId,
             code,
-            language: languageId,
+            language: language,
             status,
             passesTestCases: passedTestCase,
             totalTestCases: total,
@@ -93,7 +166,7 @@ app.post('/submit', async (req, res) => {
     }
 })
 
-app.get("/problems", async (req, res) => {
+app.get("/problems",authMiddleware, async (req, res) => {
     try {
         const problems = await Problem.find();
         if (!problems || problems.length === 0) {
@@ -106,7 +179,7 @@ app.get("/problems", async (req, res) => {
 });
 
 
-app.get("/problems/:id", async (req, res) => {
+app.get("/problems/:id",authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
         const problem = await Problem.findById(id);
@@ -119,7 +192,7 @@ app.get("/problems/:id", async (req, res) => {
     }
 });
 
-app.post('/addProblem', async (req, res) => {
+app.post('/addProblem', authMiddleware,async (req, res) => {
     try {
         const result = problemInputSchema.safeParse(req.body)
         if (!result.success) {
