@@ -5,7 +5,7 @@ const axios = require('axios')
 const { problemInputSchema, loginSchema, registerSchema } = require('./types')
 const { Problem, Submission, User } = require('./models');
 const jwt = require('jsonwebtoken')
-const {authMiddleware} = require('./middleware')
+const authMiddleware = require('./middleware')
 
 
 const app = express();
@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 require('dotenv').config();
 
-router.post('/register', async (req, res) => {
+app.post('/register', async (req, res) => {
     try {
         const result = registerSchema.safeParse(req.body);
         if (!result.success) {
@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     try {
         const result = loginSchema.safeParse(req.body);
         if (!result.success) {
