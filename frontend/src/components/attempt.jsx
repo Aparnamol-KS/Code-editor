@@ -85,7 +85,7 @@ function Attempt() {
                         <h2 className="text-3xl font-semibold font-['Share_Tech'] text-gray-300 ">
                             {problem.title}
                         </h2>
-                        {" "}
+                        
                         <span
                             className={`${problem.difficulty === "Easy"
                                 ? "text-green-400"
@@ -176,7 +176,7 @@ function Attempt() {
                                     onValueChange={setCode}
                                     highlight={(code) => highlight(code, languages[language] || languages.javascript, language)}
                                     padding={14}
-                                    style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 15, minHeight: "43vh" }}
+                                    style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 15, minHeight: "38vh" }}
                                 />
 
                             </div>

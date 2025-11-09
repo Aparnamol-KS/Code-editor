@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 export default function Register() {
+  const navigate = useNavigate()
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [message, setMessage] = useState("");
 
@@ -13,7 +15,7 @@ export default function Register() {
     e.preventDefault();
     try {
       await axios.post("http://localhost:5000/register", form);
-      setMessage("✅ Registration successful! You can now log in.");
+      navigate('/login')
     } catch (err) {
       setMessage("❌ Registration failed. Try again.");
     }

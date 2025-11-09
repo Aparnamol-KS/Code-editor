@@ -65,9 +65,12 @@ app.post('/login', async (req, res) => {
             });
         }
 
-        const token = jwt.sign({
-            id: user._id
-        }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
 
         res.json({
             message: "Login successful",
@@ -111,9 +114,9 @@ const languageMap = {
 };
 
 
-app.post('/submit',authMiddleware, async (req, res) => {
+app.post('/submit', authMiddleware, async (req, res) => {
     try {
-        const { problemId, code, language,userId  } = req.body;
+        const { problemId, code, language, userId } = req.body;
         const languageId = languageMap[language]
         if (!languageId) {
             return res.status(400).json({
@@ -166,7 +169,7 @@ app.post('/submit',authMiddleware, async (req, res) => {
     }
 })
 
-app.get("/problems",authMiddleware, async (req, res) => {
+app.get("/problems", authMiddleware, async (req, res) => {
     try {
         const problems = await Problem.find();
         if (!problems || problems.length === 0) {
@@ -179,7 +182,7 @@ app.get("/problems",authMiddleware, async (req, res) => {
 });
 
 
-app.get("/problems/:id",authMiddleware, async (req, res) => {
+app.get("/problems/:id", authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
         const problem = await Problem.findById(id);
@@ -192,7 +195,7 @@ app.get("/problems/:id",authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/addProblem', authMiddleware,async (req, res) => {
+app.post('/addProblem', authMiddleware, async (req, res) => {
     try {
         const result = problemInputSchema.safeParse(req.body)
         if (!result.success) {
@@ -208,6 +211,12 @@ app.post('/addProblem', authMiddleware,async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 })
+
+// app.get('/submissions',authMiddleware,(req,res)=>{
+
+// })
+
+
 
 app.use((err, req, res, next) => {
     console.error(err);
