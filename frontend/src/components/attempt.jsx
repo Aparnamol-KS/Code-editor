@@ -12,7 +12,7 @@ function Attempt() {
     const { id } = useParams()
     const [code, setCode] = useState('');
     const [problem, setProblem] = useState({ _id: "", title: "", description: "", difficulty: "", sampleInput: "", sampleOutput: "", testcases: [] });
-
+    const [language, setLanguage] = useState('Javascript')
 
     useEffect(() => {
         axios.get(`http://localhost:5000/problems/${id}`, {
@@ -32,19 +32,20 @@ function Attempt() {
             {/* ==== HEADER ==== */}
             <header className="flex justify-between items-center px-6 py-2 bg-[#161b22]/95 backdrop-blur-sm border-b border-gray-700 shadow-lg sticky top-0 z-50">
                 <h1 className="text-2xl font-['Orbitron'] bg-gradient-to-r from-[#00E0FF] to-[#007BFF] bg-clip-text text-transparent">
-                    {problem.title}
+                    
+                    CodeSphere
                 </h1>
 
                 <div className="flex gap-3 items-center">
                     {/* ==== LANGUAGE DROPDOWN ==== */}
                     <select
                         className="bg-[#1e1e1e] text-gray-300 border border-gray-700 rounded-md px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#007BFF]/50 transition-all"
-                        defaultValue="javascript"
-                        onChange={(e) => console.log(`Language: ${e.target.value}`)}
+
+                        value={language}
+                        onChange={(e) => setLanguage(e.target.value)}
                     >
                         <option value="javascript">JavaScript</option>
                         <option value="python">Python</option>
-                        <option value="cpp">C++</option>
                         <option value="java">Java</option>
                     </select>
 
@@ -52,6 +53,17 @@ function Attempt() {
                     <button className="bg-gradient-to-r from-[#0090FF] to-[#007BFF] hover:from-[#1d4ed8] hover:via-[#3b82f6] hover:to-[#38bdf8] transition-all px-5 py-2 rounded-md font-semibold text-white shadow-md hover:shadow-lg">
                         Run
                     </button>
+
+
+                    {/* <button
+                        disabled={isRunning}
+                        className={`bg-gradient-to-r from-[#0090FF] to-[#007BFF] px-5 py-2 rounded-md font-semibold text-white shadow-md ${isRunning ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
+                            }`}
+                        onClick={handleRun}
+                    >
+                        {isRunning ? "Running..." : "Run"}
+                    </button> */}
+
 
                     <button className="bg-gradient-to-r from-[#0090FF] to-[#007BFF] hover:from-[#1d4ed8] hover:via-[#3b82f6] hover:to-[#38bdf8] transition-all px-5 py-2 rounded-md font-semibold text-white shadow-md hover:shadow-lg">
                         Submit
@@ -63,15 +75,15 @@ function Attempt() {
             {/* ==== SPLIT PANELS ==== */}
             <Split
                 className="flex h-[calc(100%-60px)]"
-                sizes={[33, 67]}
+                sizes={[40, 60]}
                 minSize={300}
                 gutterSize={8}
             >
                 {/* ==== LEFT PANEL ==== */}
                 <div className="bg-[#0d1117] border-r border-gray-700 overflow-y-auto">
                     <div className="sticky top-0 bg-[#0d1117]/95 backdrop-blur-sm z-10  p-5 shadow-md">
-                        <h2 className="text-2xl font-semibold font-['Share_Tech'] text-gray-300 ">
-                            Problem Description
+                        <h2 className="text-3xl font-semibold font-['Share_Tech'] text-gray-300 ">
+                            {problem.title}
                         </h2>
                         {" "}
                         <span
@@ -155,20 +167,18 @@ function Attempt() {
 
                         <div className="p-5">
                             <div className="bg-[#1e1e1e] rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                                <div className="bg-[#161b22] text-gray-400 text-xs px-4 py-2 border-t border-gray-700 flex justify-between items-center">
+                                    <span>Language: {language}</span>
+                                </div>
+
                                 <Editor
                                     value={code}
-                                    onValueChange={(code) => setCode(code)}
-                                    highlight={(code) =>
-                                        highlight(code, languages.javascript, "javascript")
-                                    }
+                                    onValueChange={setCode}
+                                    highlight={(code) => highlight(code, languages[language] || languages.javascript, language)}
                                     padding={14}
-                                    style={{
-                                        fontFamily: "monospace",
-                                        fontSize: 15,
-                                        minHeight: "43vh",
-                                        outline: "none",
-                                    }}
+                                    style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 15, minHeight: "43vh" }}
                                 />
+
                             </div>
                         </div>
                     </div>

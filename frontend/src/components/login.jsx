@@ -25,8 +25,11 @@ export default function Login() {
     };
 
     return (
+
         <div className="min-h-screen flex items-center justify-center bg-gray-950 font-['JetBrains_Mono'] text-white">
+
             <div className="bg-gray-900 p-8 rounded-2xl shadow-lg w-96">
+
                 <h1 className="text-3xl font-['Orbitron'] font-semibold text-cyan-400 mb-12 text-center">
                     Welcome Back !!
                 </h1>
@@ -50,6 +53,7 @@ export default function Login() {
                         className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     />
 
+
                     <button
                         type="submit"
                         className="w-full bg-cyan-600 hover:bg-cyan-700 font-['Orbitron']  transition rounded-lg py-2 font-semibold"
@@ -59,7 +63,7 @@ export default function Login() {
                 </form>
 
                 {message && (
-                    <p className="text-center text-sm text-gray-400 mt-4">{message}</p>
+                    <p className="text-center mt-4 text-sm text-red-400">{message}</p>
                 )}
 
                 <p className="text-center font-['Share_Tech'] text-gray-500 mt-6">
