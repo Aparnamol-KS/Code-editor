@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 
-export default function Login() {
+export default function LoginPage() {
     const navigate = useNavigate()
     const [form, setForm] = useState({ email: "", password: "" });
     const [message, setMessage] = useState("");
@@ -16,8 +16,14 @@ export default function Login() {
         try {
             const res = await axios.post("http://localhost:5000/login", form);
             localStorage.setItem("token", res.data.token);
-            setMessage("Login successful!");
-            navigate('/allProblems')
+            
+            if(res.data.user.role=="admin"){
+                
+                navigate('/admin/dashboard')
+            }else{
+                navigate('/allProblems')
+            }
+            
 
         } catch (err) {
             setMessage("Invalid email or password");

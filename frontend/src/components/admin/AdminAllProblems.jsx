@@ -16,9 +16,11 @@ function AdminAllProblems() {
         });
         setProblems(res.data.problems || []);
 
-        // Decode JWT (just for role simulation if backend includes it)
-        const userInfo = JSON.parse(atob(token.split(".")[1]));
-        if (userInfo.role) setRole(userInfo.role);
+        // Decode JWT to get role
+        if (token) {
+          const userInfo = JSON.parse(atob(token.split(".")[1]));
+          if (userInfo.role) setRole(userInfo.role);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -45,15 +47,6 @@ function AdminAllProblems() {
         <h1 className="text-4xl font-['Orbitron'] bg-gradient-to-r from-[#00E0FF] to-[#007BFF] bg-clip-text text-transparent">
           CodeMatrix Arena
         </h1>
-
-        {role === "admin" && (
-          <button
-            onClick={() => navigate("/admin/addProblem")}
-            className="bg-gradient-to-r from-[#00E0FF] to-[#007BFF] text-white px-5 py-2 rounded-md font-semibold hover:shadow-lg hover:scale-105 transition-all"
-          >
-            + Add Problem
-          </button>
-        )}
       </div>
 
       {problems.length === 0 ? (
@@ -84,26 +77,22 @@ function AdminAllProblems() {
                 {problem.difficulty}
               </span>
 
-              <div className="flex justify-between items-center mt-6">
-                
-
-                {role === "admin" && (
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => navigate(`/admin/editProblem/${problem._id}`)}
-                      className="text-yellow-400 hover:text-yellow-500 font-semibold text-sm"
-                    >
-                      ✏ Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(problem._id)}
-                      className="text-red-400 hover:text-red-500 font-semibold text-sm"
-                    >
-                      🗑 Delete
-                    </button>
-                  </div>
-                )}
-              </div>
+              {role === "admin" && (
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    onClick={() => navigate(`/admin/editProblem/${problem._id}`)}
+                    className="text-yellow-400 hover:text-yellow-500 font-semibold text-sm"
+                  >
+                    ✏ Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(problem._id)}
+                    className="text-red-400 hover:text-red-500 font-semibold text-sm"
+                  >
+                    🗑 Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

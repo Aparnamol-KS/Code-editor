@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 
-export default function Register() {
+function RegisterPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -78,3 +78,4 @@ export default function Register() {
     </div>
   );
 }
+export default RegisterPage;

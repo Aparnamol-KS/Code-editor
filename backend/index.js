@@ -13,6 +13,17 @@ app.use(cors());
 app.use(express.json());
 require('dotenv').config();
 
+app.get("/userAuth", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ role: user.role });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 app.post('/register', async (req, res) => {
     try {
         const result = registerSchema.safeParse(req.body);
@@ -75,7 +86,7 @@ app.post('/login', async (req, res) => {
         res.json({
             message: "Login successful",
             token,
-            user: { id: user._id, username: user.username }
+            user: { id: user._id, username: user.username,role:user.role }
         });
     } catch (error) {
         res.status(500).json({
