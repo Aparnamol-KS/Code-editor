@@ -13,8 +13,9 @@ function Submissions() {
       })
       .then((response) => setSubmissions(response.data.submissions))
       .catch((error) => console.error("Error fetching submissions:", error));
+     
   }, []);
-
+ console.log(submissions)
   return (
     <div className="min-h-screen bg-[#0d1117] text-white font-['JetBrains_Mono'] p-8">
       {/* ==== HEADER ==== */}
@@ -47,11 +48,10 @@ function Submissions() {
                 </div>
 
                 <div
-                  className={`px-4 py-1 rounded-full text-sm font-semibold ${
-                    sub.status === "Accepted"
+                  className={`px-4 py-1 rounded-full text-sm font-semibold ${sub.status === "Accepted"
                       ? "bg-green-500/20 text-green-400 border border-green-500/30"
                       : "bg-red-500/20 text-red-400 border border-red-500/30"
-                  }`}
+                    }`}
                 >
                   {sub.status}
                 </div>
@@ -66,7 +66,7 @@ function Submissions() {
                 </p>
                 <p className="text-gray-500 italic">
                   Submitted:{" "}
-                  {new Date(sub.createdAt).toLocaleString("en-IN", {
+                  {new Date(sub.submittedAt).toLocaleString("en-IN", {
                     dateStyle: "medium",
                     timeStyle: "short",
                   })}

@@ -43,11 +43,7 @@ function AdminAllProblems() {
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-gray-200 font-['JetBrains_Mono'] px-8 py-10">
-      <div className="flex justify-between items-center mb-10">
-        <h1 className="text-4xl font-['Orbitron'] bg-gradient-to-r from-[#00E0FF] to-[#007BFF] bg-clip-text text-transparent">
-          CodeMatrix Arena
-        </h1>
-      </div>
+      
 
       {problems.length === 0 ? (
         <p className="text-center text-gray-500">No problems available.</p>

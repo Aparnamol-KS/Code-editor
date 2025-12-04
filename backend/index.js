@@ -14,13 +14,13 @@ app.use(express.json());
 require('dotenv').config();
 
 app.get("/userAuth", authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json({ role: user.role });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) return res.status(404).json({ message: "User not found" });
+        res.json({ role: user.role });
+    } catch (err) {
+        res.status(500).json({ message: "Server error" });
+    }
 });
 
 
@@ -86,7 +86,7 @@ app.post('/login', async (req, res) => {
         res.json({
             message: "Login successful",
             token,
-            user: { id: user._id, username: user.username,role:user.role }
+            user: { id: user._id, username: user.username, role: user.role }
         });
     } catch (error) {
         res.status(500).json({
@@ -125,9 +125,57 @@ const languageMap = {
 };
 
 
+
+
+app.get("/problems", authMiddleware, async (req, res) => {
+    try {
+        const problems = await Problem.find();
+        if (!problems || problems.length === 0) {
+            return res.status(404).json({ message: "No problems found." });
+        }
+        res.json({ problems });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
+
+
+app.get("/problems/:id", authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const problem = await Problem.findById(id);
+        if (!problem) {
+            return res.status(404).json({ message: "This problem is unavailable!" });
+        }
+        res.json({ problem });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
+
+app.post('/addProblem', authMiddleware, async (req, res) => {
+    try {
+        const result = problemInputSchema.safeParse(req.body)
+        if (!result.success) {
+            return res.status(400).json({
+                message: "Input mismatch"
+            })
+        }
+        const data = req.body;
+        const createProblem = await Problem.create(data);
+        return res.json({ createProblem })
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+})
+
 app.post('/submit', authMiddleware, async (req, res) => {
     try {
-        const { problemId, code, language, userId } = req.body;
+        const userId = req.user.id;
+        console.log("userID",userId)
+        
+        const { problemId, code, language } = req.body;
         const languageId = languageMap[language]
         if (!languageId) {
             return res.status(400).json({
@@ -180,52 +228,45 @@ app.post('/submit', authMiddleware, async (req, res) => {
     }
 })
 
-app.get("/problems", authMiddleware, async (req, res) => {
+
+app.get('/submissions/:problemId', authMiddleware, async (req, res) => {
     try {
-        const problems = await Problem.find();
-        if (!problems || problems.length === 0) {
-            return res.status(404).json({ message: "No problems found." });
+        const userId = req.user._id;
+        const problemId = req.params.problemId;
+
+        const submissions = await Submission.find({
+            problemId,
+            userId
+        });
+
+        if (submissions.length === 0) {
+            return res.status(404).json({ message: "No submissions found" });
         }
-        res.json({ problems });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+
+        return res.json({ submissions });
+
+    } catch (err) {
+        return res.status(500).json({ message: "Server error", error: err });
     }
 });
 
-
-app.get("/problems/:id", authMiddleware, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const problem = await Problem.findById(id);
-        if (!problem) {
-            return res.status(404).json({ message: "This problem is unavailable!" });
-        }
-        res.json({ problem });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
+app.get('/submissions', authMiddleware, async (req, res) => {
+    const submissions = await Submission.find({
+        userId: req.user.id
+    });
+    res.json({ submissions });
 });
 
-app.post('/addProblem', authMiddleware, async (req, res) => {
-    try {
-        const result = problemInputSchema.safeParse(req.body)
-        if (!result.success) {
-            return res.status(400).json({
-                message: "Input mismatch"
-            })
-        }
-        const data = req.body;
-        const createProblem = await Problem.create(data);
-        return res.json({ createProblem })
+app.get('/submission/:submissionId', authMiddleware, async (req, res) => {
+    const submissionId = req.params.submissionId
+    const submission = await Submission.findById(submissionId);
 
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-})
+    if (!submission)
+        return res.status(404).json({ message: "Not found" });
 
-// app.get('/submissions',authMiddleware,(req,res)=>{
+    res.json({ submission });
+});
 
-// })
 
 
 

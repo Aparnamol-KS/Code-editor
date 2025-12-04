@@ -24,9 +24,21 @@ function AllProblems() {
     return (
         <div className="min-h-screen bg-[#0e0e10] text-gray-200 flex flex-col items-center py-12 px-4">
             {/* Heading */}
-            <h1 className="text-4xl font-['Orbitron'] text-cyan-400 mb-10">
-                CodeArena
-            </h1>
+            <div className="w-full max-w-4xl flex justify-between items-center mb-10">
+                <h1 className="text-4xl font-['Orbitron'] text-cyan-400">
+                    CodeArena
+                </h1>
+
+                <button
+                    onClick={() => navigate("/submissions")}
+                    className="px-5 py-2 rounded-xl bg-cyan-700 hover:bg-cyan-600
+                           text-white font-['Share_Tech'] text-lg transition-all duration-300
+                           border border-cyan-400/40 hover:border-cyan-300"
+                >
+                    My Submissions
+                </button>
+            </div>
+
 
             {/* Problem Grid */}
             <div className="grid gap-6 w-full max-w-4xl">
@@ -46,10 +58,10 @@ function AllProblems() {
                                     Difficulty:{" "}
                                     <span
                                         className={`${problem.difficulty === "Easy"
-                                                ? "text-green-400"
-                                                : problem.difficulty === "Medium"
-                                                    ? "text-yellow-400"
-                                                    : "text-red-400"
+                                            ? "text-green-400"
+                                            : problem.difficulty === "Medium"
+                                                ? "text-yellow-400"
+                                                : "text-red-400"
                                             }`}
                                     >
                                         {problem.difficulty}
