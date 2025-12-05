@@ -77,7 +77,7 @@ app.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user._id, role: user.role },
+            { id: user._id, role: user.role, username: user.username },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
@@ -153,6 +153,46 @@ app.get("/problems/:id", authMiddleware, async (req, res) => {
     }
 });
 
+app.put("/problems/:id", authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id || id.length !== 24) {
+            return res.status(400).json({ error: "Invalid problem ID" });
+        }
+
+        let updatedData = req.body;
+
+        if (updatedData.testCases && typeof updatedData.testCases === "string") {
+            try {
+                updatedData.testCases = JSON.parse(updatedData.testCases);
+            } catch (err) {
+                return res.status(400).json({ error: "Invalid testCases JSON format" });
+            }
+        }
+
+        const updatedProblem = await Problem.findByIdAndUpdate(
+            id,
+            updatedData,
+            { new: true }
+        );
+
+        if (!updatedProblem) {
+            return res.status(404).json({ error: "Problem not found" });
+        }
+
+        res.json({
+            message: "Problem updated successfully",
+            problem: updatedProblem,
+        });
+
+    } catch (error) {
+        console.error("Update Error:", error);
+        res.status(500).json({ error: "Server Error" });
+    }
+});
+
+
 app.post('/addProblem', authMiddleware, async (req, res) => {
     try {
         const result = problemInputSchema.safeParse(req.body)
@@ -173,6 +213,7 @@ app.post('/addProblem', authMiddleware, async (req, res) => {
 app.post('/submit', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
+        const username = req.user.username;
         console.log("userID", userId)
 
         const { problemId, code, language } = req.body;
@@ -208,6 +249,7 @@ app.post('/submit', authMiddleware, async (req, res) => {
             problemId,
             problemTitle: problem.title,
             userId,
+            username,
             code,
             language: language,
             status,
@@ -237,7 +279,6 @@ app.get('/submissions/:problemId', authMiddleware, async (req, res) => {
 
         const submissions = await Submission.find({
             problemId,
-            userId
         });
 
         if (submissions.length === 0) {

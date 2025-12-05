@@ -24,7 +24,7 @@ function EditProblem() {
           title: data.title || "",
           description: data.description || "",
           difficulty: data.difficulty || "Easy",
-          testCases: JSON.stringify(data.testCases, null, 2) || "",
+          testCases: JSON.stringify(data.testcases, null, 2) || "",
         });
       } catch (err) {
         console.error(err);
@@ -54,7 +54,7 @@ function EditProblem() {
         }
       );
       alert("Problem updated successfully!");
-      navigate("/all-problems");
+      navigate("/admin/allProblems");
     } catch (err) {
       console.error(err);
       alert("Failed to update problem!");

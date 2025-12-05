@@ -28,22 +28,11 @@ function AdminAllProblems() {
     fetchProblems();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this problem?")) return;
-    try {
-      await axios.delete(`http://localhost:5000/problems/${id}`, {
-        headers: { authorization: localStorage.getItem("token") },
-      });
-      setProblems(problems.filter((p) => p._id !== id));
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete problem");
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-gray-200 font-['JetBrains_Mono'] px-8 py-10">
-      
+
 
       {problems.length === 0 ? (
         <p className="text-center text-gray-500">No problems available.</p>
@@ -62,33 +51,35 @@ function AdminAllProblems() {
               </p>
 
               <span
-                className={`px-3 py-1 rounded-md text-xs font-semibold ${
-                  problem.difficulty === "Easy"
-                    ? "bg-green-800/30 text-green-400"
-                    : problem.difficulty === "Medium"
+                className={`px-3 py-1 rounded-md text-xs font-semibold ${problem.difficulty === "Easy"
+                  ? "bg-green-800/30 text-green-400"
+                  : problem.difficulty === "Medium"
                     ? "bg-yellow-700/30 text-yellow-400"
                     : "bg-red-800/30 text-red-400"
-                }`}
+                  }`}
               >
                 {problem.difficulty}
               </span>
 
               {role === "admin" && (
                 <div className="flex justify-end gap-3 mt-6">
+
+                  <button
+                    onClick={() => navigate(`/admin/submissions/${problem._id}`)}
+                    className="text-cyan-400 hover:text-cyan-500 font-semibold text-sm"
+                  >
+                    🗒 Submissions
+                  </button>
+
                   <button
                     onClick={() => navigate(`/admin/editProblem/${problem._id}`)}
                     className="text-yellow-400 hover:text-yellow-500 font-semibold text-sm"
                   >
                     ✏ Edit
                   </button>
-                  <button
-                    onClick={() => handleDelete(problem._id)}
-                    className="text-red-400 hover:text-red-500 font-semibold text-sm"
-                  >
-                    🗑 Delete
-                  </button>
                 </div>
               )}
+
             </div>
           ))}
         </div>

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 function AddProblem() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -36,11 +38,11 @@ function AddProblem() {
     const data = { ...formData, testcases };
 
     try {
-      const res = await axios.post("http://localhost:5000/problems", data, {
+      const res = await axios.post("http://localhost:5000/addProblem", data, {
         headers: { authorization: localStorage.getItem("token") },
       });
       alert("Problem created successfully!");
-      console.log(res.data);
+      navigate('/admin')
     } catch (err) {
       console.error(err);
       alert("Failed to create problem.");

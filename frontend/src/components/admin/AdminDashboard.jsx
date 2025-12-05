@@ -5,6 +5,7 @@ import { LayoutDashboard, ListChecks, PlusCircle, LogOut } from "lucide-react";
 import AddProblem from "./AddProblem";
 import AdminAllProblems from "./AdminAllProblems";
 import EditProblem from "./EditProblem";
+import AdminProblemSubmissions from "./Submissions"
 import NotFound from "../common/NotFound";
 
 function AdminDashboard() {
@@ -53,6 +54,9 @@ function AdminDashboard() {
 
             case "editProblem":
                 return <EditProblem />;
+
+            
+            
 
             
         }

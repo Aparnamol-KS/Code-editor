@@ -21,6 +21,8 @@ import EditProblem from "./components/admin/EditProblem";
 // Common
 import NotFound from "./components/common/NotFound";
 
+import AdminProblemSubmissions from "./components/admin/Submissions";
+
 
 function App() {
   return (
@@ -47,6 +49,8 @@ function App() {
           {/* Admin Protected Routes */}
           <Route path="/admin/*" element={<ProtectedRouteAdmin><AdminDashboard /></ProtectedRouteAdmin>} />
           <Route path="/admin/editProblem/:id" element={<ProtectedRouteAdmin><EditProblem /></ProtectedRouteAdmin>} />
+
+          <Route path="/admin/submissions/:problemId" element={<AdminProblemSubmissions />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
