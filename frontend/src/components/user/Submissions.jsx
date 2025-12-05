@@ -36,8 +36,8 @@ function Submissions() {
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="font-['Share_Tech'] text-xl text-gray-200 group-hover:text-[#00E0FF] transition">
-                    {sub.problemId?.title || "Unknown Problem"}
+                  <h2 className="font-['Orbitron'] mb-2 text-xl text-[#00E0FF]">
+                    {sub.problemTitle || "Unknown Problem"}
                   </h2>
                   <p className="text-gray-500 text-sm">
                     Language:{" "}

@@ -173,8 +173,8 @@ app.post('/addProblem', authMiddleware, async (req, res) => {
 app.post('/submit', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
-        console.log("userID",userId)
-        
+        console.log("userID", userId)
+
         const { problemId, code, language } = req.body;
         const languageId = languageMap[language]
         if (!languageId) {
@@ -206,6 +206,7 @@ app.post('/submit', authMiddleware, async (req, res) => {
 
         const newSubmission = await Submission.create({
             problemId,
+            problemTitle: problem.title,
             userId,
             code,
             language: language,
